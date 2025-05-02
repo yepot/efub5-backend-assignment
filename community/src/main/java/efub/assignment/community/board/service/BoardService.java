@@ -10,9 +10,12 @@ import efub.assignment.community.global.exception.dto.CommunityException;
 import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
 import efub.assignment.community.member.repository.MembersRepository;
+import efub.assignment.community.member.service.MembersService;
 import efub.assignment.community.post.domain.Post;
 import efub.assignment.community.post.dto.response.PostResponse;
+import efub.assignment.community.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,50 +25,69 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardService {
 
+    private final PostService postService;
     private final BoardRepository boardRepository;
     private final MembersRepository membersRepository;
+    private final MembersService membersService;
 
     @Transactional
-    public Long createBoard(BoardCreateRequest boardCreateRequest) {
+    public Long createBoard(BoardCreateRequest boardCreateRequest, Long memberId) throws CommunityException {
 
         String boardName = boardCreateRequest.boardName();
         String nickname = boardCreateRequest.boardName();
 
-//        // 게시판 이름 중복 검사
-//        if (boardRepository.existsByBoardName(boardName)) {
-//            throw new CommunityException(ClientExceptionCode.BOARD_NAME_DUPLICATED, "이미 존재하는 게시판 이름입니다.");
-//        }
+        // 게시판 이름 중복 검사
+        if (boardRepository.existsByBoardName(boardName)) {
+            throw new CommunityException(ExceptionCode.BOARD_NAME_DUPLICATED);
+        }
 
+        if (boardRepository.existsByBoardName(boardName)) {
+            throw new CommunityException(ExceptionCode.BOARD_NAME_DUPLICATED);
+        }
 
         // 게시판 주인 조회
-        Member owner = membersRepository.findByNickname(nickname);
-        //.orElseThrow(() -> new CommunityException(ClientExceptionCode.ACCOUNT_NOT_FOUND, "존재하지 않는 회원입니다. nickname=" + nickname));
+        Member owner = membersService.findByMemberId(memberId);
 
         // 게시판 생성
         Board newBoard = boardCreateRequest.toEntity(owner);
         boardRepository.save(newBoard);
 
-        return newBoard.getId();
+        return newBoard.getBoardId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public BoardResponse getBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new CommunityException(ClientExceptionCode.BOARD_NOT_FOUND));
+        Board board = findByBoardId(boardId);
         return BoardResponse.from(board);
     }
 
-//    @Transactional
-//    public void updateBoardOwner(Long boardId, BoardUpdateRequest request, Long memberId, String password) {
-//
-//    }
-//
-//    @Transactional
-//    public void deleteBoard(Long boardId, Long memberId, String password){
-//        Board board=findByBoardId(boardId);
-//        Member member=findByMemberId(memberId);
-//        boardRepository.delete(board);
-//    }
+    @Transactional
+    public void updateBoardOwner(Long boardId, BoardUpdateRequest request, Long memberId, String password) {
+        Board board = findByBoardId(boardId);
+        Member member = membersService.findByMemberId(memberId);
+        authorizeBoardOwner(board, member, password);
+        Member newOwner = membersService.findByMemberId(request.getNewOwnerId());
+        board.changeOwner(newOwner);
+    }
 
+    @Transactional
+    public void deleteBoard(Long boardId, Long memberId, String password){
+        Board board=findByBoardId(boardId);
+        Member member=membersService.findByMemberId(memberId);
+        authorizeBoardOwner(board, member, password);
+        boardRepository.delete(board);
+    }
+
+    @Transactional(readOnly = true)
+    public Board findByBoardId(Long boardId) {
+        return boardRepository.findByBoardId(boardId)
+                .orElseThrow(()-> new CommunityException(ExceptionCode.POST_NOT_FOUND));
+    }
+
+    private void authorizeBoardOwner(Board board, Member member, String password) {
+        if(!board.getOwner().equals(member) || !board.getOwner().getPassword().equals(password)) {
+            throw new CommunityException(ExceptionCode.POST_ACCOUNT_MISMATCH);
+        }
+    }
 
 }

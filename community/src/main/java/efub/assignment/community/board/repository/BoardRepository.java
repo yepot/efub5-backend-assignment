@@ -12,9 +12,10 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     // 게시판 아이디로 게시판 찾기
-    Optional<Board> findByBoardId(Long id);
+    Optional<Board> findByBoardId(Long boardId);
 
     // 최신순으로 모든 게시글 불러오기
     List<Board> findByOrderByCreatedAtDesc();
 
+    boolean existsByBoardName(String boardName);
 }

@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Null;
 import java.util.Optional;
 
 public record BoardCreateRequest(@NotNull String boardName,
-                                 @Null String description,
-                                 @Null String notice) {
+                                 String description,
+                                 String notice){
 
     public Board toEntity(Member member){
         return Board.builder()
@@ -19,5 +19,7 @@ public record BoardCreateRequest(@NotNull String boardName,
                 .owner(member)
                 .build();
     }
+
+
 
 }

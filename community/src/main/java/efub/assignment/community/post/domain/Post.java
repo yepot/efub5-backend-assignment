@@ -22,7 +22,7 @@ public class Post extends BaseEntity {
 
     // 글쓴이
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "writer_member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member writer;
 
     // 조회수
@@ -37,7 +37,7 @@ public class Post extends BaseEntity {
         this.writer=writer;
         this.content=content;
         this.anonymous=anonymous;
-        //this.viewCount=0L;
+        this.viewCount=0L;
     }
 
     // 게시물 내용 수정

@@ -15,7 +15,7 @@ public record BoardResponse(Long boardId,
 
     public static BoardResponse from(Board board){
         return new BoardResponse(
-                board.getId(),
+                board.getBoardId(),
                 board.getBoardName(),
                 board.getDescription(),
                 board.getNotice(),

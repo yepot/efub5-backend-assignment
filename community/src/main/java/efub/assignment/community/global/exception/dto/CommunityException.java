@@ -6,8 +6,11 @@ public class CommunityException extends RuntimeException{
     private final ExceptionCode exceptionCode;
 
     public CommunityException(ExceptionCode exceptionCode){
+        super(exceptionCode.getMessage());
         this.exceptionCode = exceptionCode;
     }
+
+
 
     @Override
     public String getMessage() {

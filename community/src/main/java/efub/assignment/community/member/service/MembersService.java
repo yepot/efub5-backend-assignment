@@ -1,5 +1,7 @@
 package efub.assignment.community.member.service;
 
+import efub.assignment.community.global.exception.dto.CommunityException;
+import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
 import efub.assignment.community.member.domain.MemberStatus;
 import efub.assignment.community.member.dto.CreateMemberRequestDto;
@@ -65,6 +67,16 @@ public class MembersService {
         membersRepository.save(member);
     }
 
+    @Transactional(readOnly=true)
+    public Member findByMemberId(Long memberId) {
+        return membersRepository.findByMemberId(memberId)
+                .orElseThrow(()-> new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND));
+    }
+
+    @Transactional(readOnly=true)
+    public Member findByNickname(String nickname) {
+        return membersRepository.findByNickname(nickname)
+                .orElseThrow(()-> new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND));    }
 }
 
 

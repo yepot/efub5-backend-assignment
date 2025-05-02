@@ -8,6 +8,7 @@ public enum ExceptionCode {
     // 400 Bad Request
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, ClientExceptionCode.INVALID_PARAMETER, "잘못된 인자입니다."),
     POST_CONTENT_INVALID_LENGTH(HttpStatus.BAD_REQUEST, ClientExceptionCode.POST_CONTENT_INVALID_LENGTH, "포스트 내용은 5자 이상 500자 이하여야 합니다."),
+    BOARD_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, ClientExceptionCode.BOARD_NAME_DUPLICATED, "이미 존재하는 게시판 이름입니다."),
 
     // 401 Unauthorized
     POST_ACCOUNT_MISMATCH(HttpStatus.UNAUTHORIZED, ClientExceptionCode.POST_ACCOUNT_MISMATCH, "허용되지 않은 계정의 접근입니다."),

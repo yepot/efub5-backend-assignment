@@ -4,7 +4,6 @@ import efub.assignment.community.board.dto.request.BoardCreateRequest;
 import efub.assignment.community.board.dto.request.BoardUpdateRequest;
 import efub.assignment.community.board.dto.response.BoardResponse;
 import efub.assignment.community.board.service.BoardService;
-import efub.assignment.community.post.dto.response.PostListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +14,15 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards")
-public class BoradController {
+public class BoardController {
 
     private final BoardService boardService;
 
     // 게시판 생성
-    @GetMapping
-    public ResponseEntity<Void> createBoard(@Valid @RequestBody BoardCreateRequest request){
-        Long id=boardService.createBoard(request);
+    @PostMapping
+    public ResponseEntity<Void> createBoard(@RequestHeader("Auth-Id") Long memberId,
+                                            @Valid @RequestBody BoardCreateRequest request){
+        Long id=boardService.createBoard(request, memberId);
         return ResponseEntity.created(URI.create("/boards/"+id)).build();
     }
 

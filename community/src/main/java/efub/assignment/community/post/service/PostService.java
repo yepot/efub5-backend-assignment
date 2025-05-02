@@ -1,9 +1,11 @@
 package efub.assignment.community.post.service;
 
+import efub.assignment.community.board.service.BoardService;
 import efub.assignment.community.global.exception.dto.CommunityException;
 import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
 import efub.assignment.community.member.repository.MembersRepository;
+import efub.assignment.community.member.service.MembersService;
 import efub.assignment.community.post.domain.Post;
 import efub.assignment.community.post.dto.request.PostCreateRequest;
 import efub.assignment.community.post.dto.request.PostUpdateRequest;
@@ -12,6 +14,8 @@ import efub.assignment.community.post.dto.response.PostResponse;
 import efub.assignment.community.post.dto.summary.PostSummary;
 import efub.assignment.community.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,23 +24,38 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class PostService {
+
+    private BoardService boardService;
 
     private final PostRepository postRepository;
     private final MembersRepository membersRepository;
+    private final MembersService membersService;
+
+    @Autowired
+    public void setBoardService(@Lazy BoardService boardService) {
+        this.boardService = boardService;
+    }
+
+    public PostService(PostRepository postRepository,
+                       MembersRepository membersRepository,
+                       MembersService membersService) {
+        this.postRepository = postRepository;
+        this.membersRepository = membersRepository;
+        this.membersService = membersService;
+    }
 
     @Transactional
     public Long createPost(PostCreateRequest postCreateRequest){
         Long memberId=postCreateRequest.memberId();
-        Member writer = membersRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. id=" + memberId));
+        Member writer = membersService.findByMemberId(memberId);
         Post newPost=postCreateRequest.toEntity(writer);
         postRepository.save(newPost);
         return newPost.getId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public PostResponse getPost(Long postId) {
         postRepository.increaseViewCount(postId);
         Post post=findByPostId(postId);
@@ -53,7 +72,7 @@ public class PostService {
     @Transactional
     public void updatePostContent(Long postId, PostUpdateRequest request, Long memberId, String password) {
         Post post=findByPostId(postId);
-        Member member=findByAccountId(memberId);
+        Member member=findByMemberId(memberId);
         authorizePostWriter(post, member, password);
         post.changeContent(request.content());
     }
@@ -61,25 +80,27 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId, Long memberId, String password) {
         Post post=findByPostId(postId);
-        Member member=findByAccountId(memberId);
+        Member member=findByMemberId(memberId);
         authorizePostWriter(post, member, password);
         postRepository.delete(post);
 
     }
 
+    @Transactional(readOnly = true)
     public Post findByPostId(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(()->new CommunityException(ExceptionCode.POST_NOT_FOUND.getClientExceptionCode()));
+                .orElseThrow(()->new CommunityException(ExceptionCode.POST_NOT_FOUND));
     }
 
-    private Member findByAccountId(Long memberId) {
+    @Transactional(readOnly = true)
+    private Member findByMemberId(Long memberId) {
         return membersRepository.findByMemberId(memberId)
-                .orElseThrow(()->new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND.getClientExceptionCode()));
+                .orElseThrow(()->new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND));
     }
 
     private void authorizePostWriter(Post post, Member member, String password) {
         if(!post.getWriter().equals(member) || !post.getWriter().getPassword().equals(password)) {
-            throw new CommunityException(ExceptionCode.POST_ACCOUNT_MISMATCH.getClientExceptionCode());
+            throw new CommunityException(ExceptionCode.POST_ACCOUNT_MISMATCH);
         }
     }
 
