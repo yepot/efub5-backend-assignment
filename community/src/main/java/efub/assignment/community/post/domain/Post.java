@@ -1,5 +1,6 @@
 package efub.assignment.community.post.domain;
 
+import efub.assignment.community.comment.domain.Comment;
 import efub.assignment.community.global.domain.BaseEntity;
 import efub.assignment.community.member.domain.Member;
 import jakarta.persistence.*;
@@ -7,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -45,6 +49,7 @@ public class Post extends BaseEntity {
         this.content=newContent;
     }
 
-    // 조회수 증가
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList=new ArrayList<>();
 
 }

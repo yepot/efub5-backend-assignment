@@ -1,4 +1,4 @@
-package efub.assignment.community.member.dto;
+package efub.assignment.community.member.dto.request;
 
 //멤버 수정 요청 DTO
 

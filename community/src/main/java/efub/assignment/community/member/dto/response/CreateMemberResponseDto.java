@@ -1,21 +1,21 @@
-package efub.assignment.community.member.dto;
+package efub.assignment.community.member.dto.response;
 
-//Member 조회 후 응답 DTO
+//Member 생성 후 응답 DTO
 
 import efub.assignment.community.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder @Getter
-public class MemberResponseDto {
+public class CreateMemberResponseDto {
     private Long memberId;
     private String email;
     private String nickname;
     private String university;
     private Long studentId;
 
-    public static MemberResponseDto from(Member member){
-        return MemberResponseDto.builder()
+    public static CreateMemberResponseDto from(Member member){
+        return CreateMemberResponseDto.builder()
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
@@ -23,4 +23,5 @@ public class MemberResponseDto {
                 .studentId(member.getStudentId())
                 .build();
     }
+
 }

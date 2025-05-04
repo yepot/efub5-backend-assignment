@@ -1,8 +1,12 @@
 package efub.assignment.community.member.domain;
 
+import efub.assignment.community.comment.domain.Comment;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -62,4 +66,6 @@ public class Member {
         this.status = status;
     }
 
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList=new ArrayList<>();
 }

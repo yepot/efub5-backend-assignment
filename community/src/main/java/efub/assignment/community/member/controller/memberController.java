@@ -1,9 +1,9 @@
 package efub.assignment.community.member.controller;
 
-import efub.assignment.community.member.dto.CreateMemberRequestDto;
-import efub.assignment.community.member.dto.CreateMemberResponseDto;
-import efub.assignment.community.member.dto.MemberResponseDto;
-import efub.assignment.community.member.dto.UpdateMemberRequestDto;
+import efub.assignment.community.member.dto.request.CreateMemberRequestDto;
+import efub.assignment.community.member.dto.response.CreateMemberResponseDto;
+import efub.assignment.community.member.dto.response.MemberResponseDto;
+import efub.assignment.community.member.dto.request.UpdateMemberRequestDto;
 import efub.assignment.community.member.service.MembersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
