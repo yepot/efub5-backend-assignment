@@ -14,25 +14,13 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
-public class PostCommentController {
+@RequestMapping(("/comments"))
+public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<Void> createComment(@PathVariable("postId") Long postId,
-                                              @RequestBody CommentCreateRequest request){
-        Long commentId = commentService.createComment(postId, request);
-        return ResponseEntity.created(URI.create("/posts/"+postId+"/comments/"+commentId)).build();
-
-    }
-
-    @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<PostCommentResponse> getComments(@PathVariable("postId") Long postId){
-        return ResponseEntity.ok(commentService.getPostCommentList(postId));
-    }
-
-    @PatchMapping("/comments/{commentId}")
+    // 댓글 수정
+    @PatchMapping("/{commentId}")
     public ResponseEntity<Void> updateComment(@PathVariable("commentId") Long commentId,
                                               @RequestHeader("Auth-Id") Long memberId,
                                               @RequestHeader("Auth-Password") String password,
@@ -40,6 +28,15 @@ public class PostCommentController {
 
         commentService.updateCommentContent(commentId, commentUpdateRequest, memberId, password);
         return ResponseEntity.noContent().build();
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable("commentId") Long commentId,
+                                              @RequestHeader("Auth-id") Long memberId,
+                                              @RequestHeader("Auth-password") String password) {
+        commentService.deleteComment(commentId, memberId, password);
+        return ResponseEntity.ok("댓글 삭제 성공");
     }
 
 }

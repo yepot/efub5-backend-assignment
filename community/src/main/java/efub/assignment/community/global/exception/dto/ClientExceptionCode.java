@@ -15,5 +15,12 @@ public enum ClientExceptionCode {
 
     // Board
     BOARD_NOT_FOUND,
-    BOARD_NAME_DUPLICATED
+    BOARD_NAME_DUPLICATED,
+
+    // Comment
+    COMMENT_NOT_FOUND,
+
+    // CommentLike
+    LIKE_NOT_FOUND,
+    LIKE_ALREADY_EXISTS
 }
