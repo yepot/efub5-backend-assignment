@@ -8,7 +8,7 @@ import efub.assignment.community.board.repository.BoardRepository;
 import efub.assignment.community.global.exception.dto.CommunityException;
 import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
-import efub.assignment.community.member.repository.MembersRepository;
+import efub.assignment.community.member.repository.MemberRepository;
 import efub.assignment.community.member.service.MemberService;
 import efub.assignment.community.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class BoardService {
 
     private final PostService postService;
     private final BoardRepository boardRepository;
-    private final MembersRepository membersRepository;
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
 
     @Transactional

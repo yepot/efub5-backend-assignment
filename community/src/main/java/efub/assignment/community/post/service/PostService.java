@@ -1,12 +1,10 @@
 package efub.assignment.community.post.service;
 
 import efub.assignment.community.board.service.BoardService;
-import efub.assignment.community.comment.domain.Comment;
-import efub.assignment.community.comment.domain.CommentLike;
 import efub.assignment.community.global.exception.dto.CommunityException;
 import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
-import efub.assignment.community.member.repository.MembersRepository;
+import efub.assignment.community.member.repository.MemberRepository;
 import efub.assignment.community.member.service.MemberService;
 import efub.assignment.community.post.domain.Post;
 import efub.assignment.community.post.domain.PostLike;
@@ -18,8 +16,6 @@ import efub.assignment.community.post.dto.summary.PostSummary;
 import efub.assignment.community.post.repository.PostLikeRepository;
 import efub.assignment.community.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +28,7 @@ public class PostService {
     private BoardService boardService;
 
     private final PostRepository postRepository;
-    private final MembersRepository membersRepository;
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final PostLikeRepository postLikeRepository;
 
@@ -88,7 +84,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     private Member findByMemberId(Long memberId) {
-        return membersRepository.findByMemberId(memberId)
+        return memberRepository.findByMemberId(memberId)
                 .orElseThrow(()->new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND));
     }
 

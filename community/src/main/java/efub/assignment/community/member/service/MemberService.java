@@ -8,7 +8,7 @@ import efub.assignment.community.member.dto.request.CreateMemberRequestDto;
 import efub.assignment.community.member.dto.response.CreateMemberResponseDto;
 import efub.assignment.community.member.dto.response.MemberResponseDto;
 import efub.assignment.community.member.dto.request.UpdateMemberRequestDto;
-import efub.assignment.community.member.repository.MembersRepository;
+import efub.assignment.community.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberService {
 
-    private final MembersRepository membersRepository;
+    private final MemberRepository memberRepository;
 
     //멤버 단건 조회: GET member/{memberId}
     @Transactional(readOnly=true)
     public MemberResponseDto getMember(Long memberId){
-        Member member=membersRepository.findByMemberId(memberId)
+        Member member= memberRepository.findByMemberId(memberId)
                 .orElseThrow(()->new IllegalArgumentException("해당 멤버를 찾을 수 없습니다."));
         return MemberResponseDto.from(member);
     }
@@ -37,7 +37,7 @@ public class MemberService {
             throw new IllegalArgumentException("유효하지 않은 이메일 형식입니다: " + requestDto.getEmail());
         }
         Member member=requestDto.toEntity();
-        Member savedMember=membersRepository.save(member);
+        Member savedMember= memberRepository.save(member);
 
         return CreateMemberResponseDto.from(savedMember);
     }
@@ -51,31 +51,31 @@ public class MemberService {
     //멤버 수정
     @Transactional
     public MemberResponseDto updateMember(Long memberId, UpdateMemberRequestDto requestDto){
-        Member member=membersRepository.findByMemberId(memberId)
+        Member member= memberRepository.findByMemberId(memberId)
                 .orElseThrow(()->new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
         member.updateMember(requestDto.getEmail(), requestDto.getPassword(), requestDto.getNickname(), requestDto.getUniversity(), requestDto.getStudentId());
-        Member updatedMember=membersRepository.save(member);
+        Member updatedMember= memberRepository.save(member);
         return MemberResponseDto.from(updatedMember);
     }
 
     //멤버 논리적 삭제 (status 변경)
     @Transactional
     public void deleteMember(Long memberId){
-        Member member=membersRepository.findByMemberId(memberId)
+        Member member= memberRepository.findByMemberId(memberId)
                 .orElseThrow(()->new IllegalArgumentException("삭제할 유저를 찾을 수 없습니다."));
         member.changeStatus(MemberStatus.DEACTIVATED);
-        membersRepository.save(member);
+        memberRepository.save(member);
     }
 
     @Transactional(readOnly=true)
     public Member findByMemberId(Long memberId) {
-        return membersRepository.findByMemberId(memberId)
+        return memberRepository.findByMemberId(memberId)
                 .orElseThrow(()-> new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND));
     }
 
     @Transactional(readOnly=true)
     public Member findByNickname(String nickname) {
-        return membersRepository.findByNickname(nickname)
+        return memberRepository.findByNickname(nickname)
                 .orElseThrow(()-> new CommunityException(ExceptionCode.ACCOUNT_NOT_FOUND));    }
 }
 
