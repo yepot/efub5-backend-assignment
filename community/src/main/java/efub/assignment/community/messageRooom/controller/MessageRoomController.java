@@ -4,6 +4,7 @@ import efub.assignment.community.board.dto.request.BoardCreateRequest;
 import efub.assignment.community.messageRooom.dto.request.MessageRoomCheckRequest;
 import efub.assignment.community.messageRooom.dto.request.MessageRoomCreateRequest;
 import efub.assignment.community.messageRooom.dto.response.MessageRoomIdResponse;
+import efub.assignment.community.messageRooom.dto.response.MessageRoomListResponse;
 import efub.assignment.community.messageRooom.dto.response.MessageRoomResponse;
 import efub.assignment.community.messageRooom.service.MessageRoomService;
 import efub.assignment.community.post.dto.request.PostCreateRequest;
@@ -38,7 +39,12 @@ public class MessageRoomController {
         return ResponseEntity.ok(new MessageRoomIdResponse(id));
     }
 
-    // 조회
+    // 특정 멤버가 참여하고 있는 채팅방 목록 조회
+    @GetMapping
+    public ResponseEntity<MessageRoomListResponse> getRooms(@RequestParam("memberId") Long memberId) {
+        return ResponseEntity.ok(messageRoomService.getMessageRoomsByMember(memberId));
+    }
+
 
 
     // 쪽지방 삭제

@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findAllByMessageRoomOrderByCreatedAt(MessageRoom room);
+    Message findTopByMessageRoomOrderByCreatedAtDesc(MessageRoom room);
 
 
 }

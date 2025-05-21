@@ -15,5 +15,12 @@ public interface MessageRoomRepository extends JpaRepository<MessageRoom, Long> 
     Optional<MessageRoom> findBySenderAndReceiverAndPost(Member sender, Member receiver, Post post);
     List<MessageRoom> findAllBySenderAndReceiverAndPost(Member sender, Member receiver, Post post);
 
+    @Query("""
+    SELECT r
+    FROM MessageRoom r
+    WHERE r.sender.memberId = :memberId OR r.receiver.memberId = :memberId
+""")
+    List<MessageRoom> findAllByParticipant(@Param("memberId") Long memberId);
+
 }
 

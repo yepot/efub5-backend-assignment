@@ -5,9 +5,13 @@ import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
 import efub.assignment.community.member.repository.MemberRepository;
 import efub.assignment.community.member.service.MemberService;
+import efub.assignment.community.message.domain.Message;
+import efub.assignment.community.message.repository.MessageRepository;
 import efub.assignment.community.messageRooom.domain.MessageRoom;
 import efub.assignment.community.messageRooom.dto.request.MessageRoomCheckRequest;
 import efub.assignment.community.messageRooom.dto.request.MessageRoomCreateRequest;
+import efub.assignment.community.messageRooom.dto.response.MessageRoomListResponse;
+import efub.assignment.community.messageRooom.dto.response.MessageRoomPreviewResponse;
 import efub.assignment.community.messageRooom.dto.response.MessageRoomResponse;
 import efub.assignment.community.messageRooom.repository.MessageRoomRepository;
 import efub.assignment.community.post.domain.Post;
@@ -29,8 +33,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 public class MessageRoomService {
 
-    private final MemberRepository memberRepository;
-    private final PostRepository postRepository;
+    private final MessageRepository messageRepository;
     private final MessageRoomRepository messageRoomRepository;
     private final MemberService memberService;
     private final PostService postService;
@@ -89,6 +92,25 @@ public class MessageRoomService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 메시지방이 존재하지 않습니다."));
     }
 
+    @Transactional
+    public MessageRoomListResponse getMessageRoomsByMember(Long memberId) {
+        Member member = memberService.findByMemberId(memberId);
+
+        List<MessageRoom> messageRooms = messageRoomRepository.findAllByParticipant(memberId);
+
+        List<MessageRoomPreviewResponse> roomPreviews = messageRooms.stream()
+                .map(messageRoom -> {
+                    Message latest = messageRepository.findTopByMessageRoomOrderByCreatedAtDesc(messageRoom);
+                    return new MessageRoomPreviewResponse(
+                            messageRoom.getMessageRoomId(),
+                            latest != null ? latest.getMessageContent() : "(메시지 없음)",
+                            latest != null ? latest.getCreatedAt() : null
+                    );
+                })
+                .toList();
+
+        return new MessageRoomListResponse(roomPreviews);
+    }
 
 
 }
