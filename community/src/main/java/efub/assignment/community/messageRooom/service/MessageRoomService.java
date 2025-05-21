@@ -83,6 +83,12 @@ public class MessageRoomService {
         messageRoomRepository.delete(messageRoom);
     }
 
+    @Transactional
+    public MessageRoom findByMessageRoomId(Long messageRoomId) {
+        return messageRoomRepository.findById(messageRoomId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 메시지방이 존재하지 않습니다."));
+    }
+
 
 
 }

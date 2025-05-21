@@ -1,5 +1,6 @@
 package efub.assignment.community.post.dto.response;
 
+import efub.assignment.community.message.domain.Message;
 import efub.assignment.community.post.domain.Post;
 
 import java.time.LocalDate;
@@ -25,3 +26,4 @@ public record PostResponse(Long postId,
         );
     }
 }
+

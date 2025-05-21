@@ -23,17 +23,17 @@ public class MessageRoom extends BaseEntity {
 
     // 처음 보낸 사람 ID
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "sender_id", nullable = false)
     private Member sender;
 
     // 처음 받는 사람 ID
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
+    @JoinColumn(name = "receiver_id", nullable = false)
     private Member receiver;
 
     // 쪽지가 시작된 게시글 ID
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "receiver_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     // 첫 쪽지 내용
