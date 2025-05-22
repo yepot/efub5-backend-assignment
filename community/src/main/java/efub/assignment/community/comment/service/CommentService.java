@@ -11,6 +11,9 @@ import efub.assignment.community.global.exception.dto.ExceptionCode;
 import efub.assignment.community.member.domain.Member;
 import efub.assignment.community.member.dto.response.MemberCommentResponse;
 import efub.assignment.community.member.service.MemberService;
+import efub.assignment.community.notification.domain.Notification;
+import efub.assignment.community.notification.domain.NotificationType;
+import efub.assignment.community.notification.repository.NotificationRepository;
 import efub.assignment.community.post.domain.Post;
 import efub.assignment.community.post.dto.response.PostCommentResponse;
 import efub.assignment.community.post.service.PostService;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,6 +32,7 @@ public class CommentService {
     private final PostService postService;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final NotificationRepository notificationRepository;
 
     // 댓글 생성
     @Transactional
@@ -37,6 +42,17 @@ public class CommentService {
         Post post = postService.findByPostId(postId);
         Comment newComment = commentCreateRequest.toEntity(writer, post, post.isAnonymous());
         commentRepository.save(newComment);
+
+        // 댓글 알림 생성
+        Notification notification = Notification.builder()
+                .type(NotificationType.COMMENT)
+                .referenceId(newComment.getCommentId())
+                .member(post.getWriter()) // 게시글 작성자에게 알림이 가도록
+                .notifiedAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+
         return newComment.getCommentId();
     }
     

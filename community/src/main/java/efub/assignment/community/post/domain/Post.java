@@ -1,5 +1,6 @@
 package efub.assignment.community.post.domain;
 
+import efub.assignment.community.board.domain.Board;
 import efub.assignment.community.comment.domain.Comment;
 import efub.assignment.community.global.domain.BaseEntity;
 import efub.assignment.community.member.domain.Member;
@@ -34,6 +35,11 @@ public class Post extends BaseEntity {
 
     // 익명 여부
     private boolean anonymous;
+
+    // 게시판
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
 
     // 빌더
     @Builder

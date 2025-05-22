@@ -14,6 +14,9 @@ import efub.assignment.community.messageRooom.dto.response.MessageRoomListRespon
 import efub.assignment.community.messageRooom.dto.response.MessageRoomPreviewResponse;
 import efub.assignment.community.messageRooom.dto.response.MessageRoomResponse;
 import efub.assignment.community.messageRooom.repository.MessageRoomRepository;
+import efub.assignment.community.notification.domain.Notification;
+import efub.assignment.community.notification.domain.NotificationType;
+import efub.assignment.community.notification.repository.NotificationRepository;
 import efub.assignment.community.post.domain.Post;
 import efub.assignment.community.post.repository.PostRepository;
 import efub.assignment.community.post.service.PostService;
@@ -24,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +39,7 @@ public class MessageRoomService {
 
     private final MessageRepository messageRepository;
     private final MessageRoomRepository messageRoomRepository;
+    private final NotificationRepository notificationRepository;
     private final MemberService memberService;
     private final PostService postService;
 
@@ -46,6 +51,15 @@ public class MessageRoomService {
 
         MessageRoom messageRoom = request.toEntity(sender, receiver, post);
         messageRoomRepository.save(messageRoom);
+
+        // 쪽지방 알림 생성
+        Notification notification = Notification.builder()
+                .type(NotificationType.MESSAGE_ROOM)
+                .referenceId(messageRoom.getMessageRoomId())
+                .member(receiver)
+                .notifiedAt(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
 
         return MessageRoomResponse.from(messageRoom);
     }
