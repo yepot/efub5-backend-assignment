@@ -36,7 +36,7 @@ public class MessageRoom extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    // 첫 쪽지 내용
+    // 첫 쪽지 내용 굳이
     @Column(nullable = false)
     private String messageContent;
 

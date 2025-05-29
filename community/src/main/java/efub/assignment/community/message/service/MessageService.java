@@ -26,7 +26,6 @@ public class MessageService {
     private final MessageRoomService messageRoomService;
 
     // 쪽지 생성
-    @Transactional
     public MessageResponse createMessage(MessageCreateRequest request){
         Member sender = memberService.findByMemberId(request.senderId());
         MessageRoom messageRoom = messageRoomService.findByMessageRoomId(request.messageRoomId());
@@ -37,7 +36,7 @@ public class MessageService {
         return MessageResponse.from(message);
     }
 
-    @Transactional(readOnly = true)
+    // 쪽지 조회
     public MessageListResponse getMessages(Long messageRoomId, Long viewerId){
         MessageRoom messageRoom = messageRoomService.findByMessageRoomId(messageRoomId);
         Member viewer = memberService.findByMemberId(viewerId);
