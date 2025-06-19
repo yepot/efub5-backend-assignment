@@ -3,8 +3,8 @@ spring:
     name: community
 
   datasource:
-    url: jdbc:mysql://localhost:3306/community?useSSL=false&useUnicode=true
-    username: root
+    url: jdbc:mysql://efub-community.cbosoki4qqbu.ap-northeast-2.rds.amazonaws.com:3306/community?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    username: admin
     password: mdmstj2395!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
