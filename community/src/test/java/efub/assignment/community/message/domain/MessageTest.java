@@ -14,7 +14,6 @@ class MessageTest {
 
     @BeforeEach
     void setUp() {
-        // 실제 엔티티 생성이 부담되면 Mockito mock 사용
         Member sender = Mockito.mock(Member.class);
         MessageRoom room = Mockito.mock(MessageRoom.class);
 
